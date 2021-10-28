@@ -26,9 +26,21 @@ app.put("/api/workouts/:id", async (req, res) => {
         }
       );
       res.json(workoutUpdate);
-    } catch (err) {
-      res.status(500).send(err.message);
+    } catch (error) {
+      res.status(500).send(error);
     }
   });
+
+
+// this route responds to post requests on /api/workouts to create a new workout
+app.post("/api/workouts", async (req, res) => {
+    try {
+      const newWorkout = await db.Workout.create(req.body);
+      res.json(newWorkout);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+
 
   module.exports = app;
