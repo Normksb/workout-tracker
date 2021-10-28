@@ -38,9 +38,26 @@ app.post("/api/workouts", async (req, res) => {
       const newWorkout = await db.Workout.create(req.body);
       res.json(newWorkout);
     } catch (error) {
-      res.status(500).send(error.message);
+      res.status(500).send(error);
     }
   });
 
+// this route responds to get requests to /api/workouts/range with the last 7 workouts
+app.get("/api/workouts/range", async (req, res) => {
+    try {
+      const workoutRange = (
+        await db.Workout.aggregate([
+          {
+            $addFields: {
+              totalDuration: { $sum: "$exercises.duration" },
+            },
+          },
+        ])
+          .limit(7))
+      res.json(workoutRange);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  });
 
-  module.exports = app;
+module.exports = app;
